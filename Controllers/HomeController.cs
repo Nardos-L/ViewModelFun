@@ -1,75 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 using ViewModelFun.Models;
 
 namespace ViewModelFun.Controllers
 {
     public class HomeController : Controller
     {
-        public int RandomNumber { get; private set; }
-
-        //localhost:5000
-        [HttpGet("")]
-        public ViewResult Index()
+        public List<User> GenerateUsers()
         {
-            string messages = "Here are some messages";
-
-            return View("Index", messages);
+            return new List<User>()
+            {
+                new User(){ FirstName="Moose", LastName="Phillips"},
+                new User(){ FirstName="Ricky", LastName="Thames"},
+                new User(){ FirstName="Sally", LastName="McSally"},
+                new User(){ FirstName="Barb", LastName="Reardan"},
+            };
         }
+        // GET: /Home/
+        [HttpGet]
+        [Route("")]
+        public IActionResult Index()
+        {
+            string stringModel = "My message is here, this is a simple string that I am using as a model";
 
-        [HttpGet("/numbers")]
+            return View("Index", stringModel);
+        }
+        [HttpGet("numbers")]
         public IActionResult Numbers()
         {
-            int[] numbers = new int[]
-            {
-                1,2,3,10,43,5
-            };
-            return View("Numbers", numbers);
+            int[] numbers = new int[]{1,2,3,4,6,-13,100,-2};
+            return View("Numbers",numbers);
         }
-
-        [HttpGet("/users")]
-        public IActionResult Names()
+        [HttpGet("users")]
+        public IActionResult AllUsers()
         {
-            // to a View that has defined a model as @model string[]
-            List<string> names = new List<string>()
-            {
-                "Sally",
-            "Billy",
-            "Joey",
-            "Moose"
-            };
-            
-            return View("Names", names);
+            var users = GenerateUsers();
+            return View("Names",users);
         }
-
-        [HttpGet("/user")]
-        // to a View that has defined a model as @model string[]
-        public IActionResult oneUser()
+        [HttpGet("user")]
+        public IActionResult OneUser()
         {
-            List<string> names = new List<string>()
-            {
-                "Sally",
-                "Billy",
-                "Joey",
-                "Moose"
-            };
+            var rand = new Random();
+            var users = GenerateUsers();
 
-         
-            User userViewModel = new User()
-            {
-                names = names,
-                RandomNumber = new Random().Next()
-
-            }; 
-
-
-            
-            return View("Oneuser", userViewModel);
+            // grab random user (could just create one, grab first, etc...)
+            var user = users[rand.Next(users.Count)];
+            return View(user);
         }
     }
 }
+
+
+
+
+
+
